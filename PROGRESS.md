@@ -74,8 +74,8 @@ Test hooks namespace: `window.TDE` exposes pure modules + state accessors
 ## Milestones
 
 - [x] **M0**: Repo created, initial `PROGRESS.md` and `README.md` pushed.
-- [ ] **M1**: `dump_parity_reference.m` written, run, `physics_reference.json` committed.
-- [ ] **M2**: JS modules (Defaults, Physics, ICs, Roche) + `test_parity.html`
+- [x] **M1**: `dump_parity_reference.m` written, run, `physics_reference.json` committed.
+- [x] **M2**: JS modules (Defaults, Physics, ICs, Roche) + `test_parity.html`
        written and committed. Container-side parity test PASS.
 - [ ] **M3**: GUI shell (`index.html` with controls panel, canvas, no popups yet)
        written and committed. Container-side smoke test PASS.
@@ -87,7 +87,13 @@ Test hooks namespace: `window.TDE` exposes pure modules + state accessors
 
 ## Current state
 
-**M0 in progress.** Creating empty repo with PROGRESS.md as the first commit.
+**M2 done.** All 44 parity checks PASS in container Chromium against MATLAB reference data:
+- Pure functions (Roche, Lagrange, binary_ic, cluster_ic): zero diff or float-rounding (~1e-14)
+- Hex offsets: identical set (order of equal-radius offsets doesn't matter for physics)
+- One Verlet step: ~7e-18 max diff (bit-identical to rounding)
+- 100 Verlet steps: ~1e-16 max diff for positions, 6e-14 for energy, 2e-12 for angular momentum
+
+Next: M3 — write the GUI shell (`index.html`) without animation/popups.
 
 ## Recovery instructions for a fresh Claude session
 

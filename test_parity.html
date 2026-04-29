@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Tidal Disruption Explorer — Parity Test</title>
+  <style>
+    body { font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+           background: #111; color: #ddd; margin: 0; padding: 16px; }
+    h1   { color: #fff; margin: 0 0 8px 0; }
+    .pass { color: #6f6; }
+    .fail { color: #f66; font-weight: bold; }
+    .skip { color: #fa6; }
+    pre  { white-space: pre-wrap; }
+    #summary { background: #222; padding: 8px; margin: 8px 0;
+               border-left: 3px solid #6f6; }
+    #summary.fail { border-left-color: #f66; }
+  </style>
+</head>
+<body>
+  <h1>Tidal Disruption Explorer — JS vs MATLAB Parity Test</h1>
+  <div id="summary">running...</div>
+  <pre id="results"></pre>
+
+  <script src="tde_modules.js"></script>
+  <script>
+  (async function () {
+    const out = [];
+    const log = (line) => out.push(line);
+    let nPass = 0, nFail = 0;
+
+    const fmt = (x, prec = 6) => {
+      if (typeof x !== 'number' || !isFinite(x)) return String(x);
+      return x.toExponential(prec);
+    };
+
+    // assertNear: check that |a - b| <= tol; report PASS/FAIL with diff.
+    const assertNear = (label, a, b, tol) => {
+      const diff = Math.abs(a - b);
+      if (diff <= tol) {
+        log(`[PASS] ${label}  diff=${fmt(diff, 3)}  (tol=${fmt(tol, 1)})`);
+        nPass++;
+      } else {
+        log(`[FAIL] ${label}  JS=${fmt(a)}  MATLAB=${fmt(b)}  diff=${fmt(diff, 3)}  (tol=${fmt(tol, 1)})`);
+        nFail++;
+      }
+    };
+
+    // assertArrayNear: max-diff comparison for two flat numeric arrays
+    const assertArrayNear = (label, a, b, tol) => {
+      if (a.length !== b.length) {
+        log(`[FAIL] ${label}  length mismatch: JS=${a.length}, MATLAB=${b.length}`);
+        nFail++;
+        return;
+      }
+      let maxDiff = 0, maxIdx = -1;
+      for (let i = 0; i < a.length; i++) {
+        const d = Math.abs(a[i] - b[i]);
+        if (d > maxDiff) { maxDiff = d; maxIdx = i; }
+      }
+      if (maxDiff <= tol) {
+        log(`[PASS] ${label}  N=${a.length}, max diff=${fmt(maxDiff, 3)}  (tol=${fmt(tol, 1)})`);
+        nPass++;
+      } else {
+        log(`[FAIL] ${label}  max diff=${fmt(maxDiff, 3)} at i=${maxIdx}`
+            + `  JS=${fmt(a[maxIdx])}  MATLAB=${fmt(b[maxIdx])}  (tol=${fmt(tol, 1)})`);
+        nFail++;
+      }
+    };
+
+    // Load reference data
+    let ref;
+    try {
+      const resp = await fetch('physics_reference.json');
+      ref = await resp.json();
+      log(`Loaded physics_reference.json (${JSON.stringify(ref).length} bytes)`);
+      log(`MATLAB version: ${ref.meta.matlabVer}`);
+      log(`Reference date: ${ref.meta.date}`);
+      log('');
+    } catch (e) {
+      log(`[FAIL] Could not load physics_reference.json: ${e.message}`);
+      document.getElementById('results').textContent = out.join('\n');
+      document.getElementById('summary').textContent = 'FATAL: cannot load reference data';
+      document.getElementById('summary').className = 'fail';
+      window._parityResult = { pass: 0, fail: 1, fatal: true };
+      return;
+    }
+
+    // ---- A.1 hexPackedOffsets ----------------------------------------------
+    log('--- A.1 hexPackedOffsets ---');
+    {
+      const inp = ref.hexN19_pr3_2_eg1.inputs;
+      const expectedOffsets = ref.hexN19_pr3_2_eg1.offsets;
+      const got = TDE.Physics.hexPackedOffsets(inp.N, inp.particleRadius, inp.edgeGap);
+      // Compare as a SET — ordering of equal-radius offsets is physics-irrelevant
+      // and may differ between MATLAB's stable sort and JS's. We sort both
+      // canonically (by x then y) before comparing.
+      const canon = (a, b) => (a[0] - b[0]) || (a[1] - b[1]);
+      const gotSorted = got.slice().sort(canon);
+      const expSorted = expectedOffsets.slice().sort(canon);
+      assertArrayNear(`hexPackedOffsets(${inp.N}, ${inp.particleRadius}, ${inp.edgeGap}) [as set]`,
+                      gotSorted.flat(), expSorted.flat(), 1e-12);
+    }
+
+    // ---- A.2 computeRocheRadii ---------------------------------------------
+    log('\n--- A.2 computeRocheRadii ---');
+    for (const key of ['roche_single_1250', 'roche_binary_eq_150', 'roche_binary_uneq_1000_250']) {
+      const r = ref[key];
+      const got = TDE.Roche.computeRocheRadii(r.inputs);
+      // Reference R3D may be scalar (single) or array (binary). Normalize:
+      const expR3D   = Array.isArray(r.rocheR_3D)   ? r.rocheR_3D   : [r.rocheR_3D];
+      const expRdisk = Array.isArray(r.rocheR_disk) ? r.rocheR_disk : [r.rocheR_disk];
+      assertArrayNear(`${key} R3D`,   got.R3D,   expR3D,   1e-9);
+      assertArrayNear(`${key} Rdisk`, got.Rdisk, expRdisk, 1e-9);
+    }
+
+    // ---- A.3 lagrange_point ------------------------------------------------
+    log('\n--- A.3 lagrange_point ---');
+    for (const key of ['lagrange_eq', 'lagrange_uneq']) {
+      const r = ref[key];
+      const inp = r.inputs;
+      for (let k = 0; k < r.points.length; k++) {
+        const p = r.points[k];
+        const got = TDE.ICs.lagrange_point(inp.M1, inp.M2, inp.a, p);
+        const exp = r.xy[k];
+        assertNear(`${key}.${p}.x`, got.x, exp[0], 1e-8);
+        assertNear(`${key}.${p}.y`, got.y, exp[1], 1e-12);
+      }
+    }
+
+    // ---- A.4 binary_ic -----------------------------------------------------
+    log('\n--- A.4 binary_ic ---');
+    for (const key of ['binary_ic_eq_circ', 'binary_ic_uneq_ecc']) {
+      const r = ref[key];
+      const inp = r.inputs;
+      const sources = TDE.ICs.binary_ic(inp.M1, inp.M2, inp.a, inp.e, inp.phase);
+      const gotS1 = [sources[0].x, sources[0].y, sources[0].vx, sources[0].vy,
+                     sources[0].ax, sources[0].ay, sources[0].m];
+      const gotS2 = [sources[1].x, sources[1].y, sources[1].vx, sources[1].vy,
+                     sources[1].ax, sources[1].ay, sources[1].m];
+      assertArrayNear(`${key} s1`, gotS1, r.s1, 1e-12);
+      assertArrayNear(`${key} s2`, gotS2, r.s2, 1e-12);
+    }
+
+    // ---- A.5 cluster_ic ----------------------------------------------------
+    log('\n--- A.5 cluster_ic ---');
+    for (const key of Object.keys(ref.cluster_ic)) {
+      const r = ref.cluster_ic[key];
+      const inp = r.inputs;
+      const Mc = inp.particleMass * inp.Nparticles;
+      const scenario = { type: inp.scenarioType, ic: inp.clusterIC };
+      const params = {
+        sourceMass:        inp.sourceMass,
+        M1:                inp.M1,
+        M2:                inp.M2,
+        clusterMass:       Mc,
+        periapsis:         inp.periapsis,
+        eccentricity:      inp.eccentricity,
+        vInfinity:         inp.vInfinity,
+        lagrangePoint:     inp.lagrangePoint,
+        circumbinaryRatio: inp.circumbinaryRatio,
+        impactAngle:       inp.impactAngle,
+        binarySep:         inp.binarySep,
+      };
+      const got = TDE.ICs.cluster_ic(scenario, params);
+      assertArrayNear(`cluster_ic.${key}`,
+        [got.x, got.y, got.vx, got.vy],
+        [r.x,   r.y,   r.vx,   r.vy],
+        1e-12);
+    }
+
+    // ---- B  single Verlet step --------------------------------------------
+    log('\n--- B  single verletStep ---');
+    {
+      const initial = ref.verlet_initial;
+      const expStep1 = ref.verlet_step1;
+      const cfg = initial.cfg;
+      const sources = TDE.Util.matToSources(initial.sources);
+      const particles = TDE.Util.matToParticles(initial.particles);
+      // The reference initial state already has accelerations baked in.
+      // We need to start from those and run a single verletStep.
+      TDE.Physics.verletStep(sources, particles,
+        cfg.particleMass, cfg.stellarRadius,
+        cfg.energyLoss, cfg.particleRadius, cfg.dt,
+        cfg.vRestThreshold);
+      const gotSrc = TDE.Util.sourcesToMat(sources);
+      const gotPar = TDE.Util.particlesToMat(particles);
+      assertArrayNear('verletStep1 sources', gotSrc.flat(), expStep1.sources.flat(), 1e-10);
+      assertArrayNear('verletStep1 particles', gotPar.flat(), expStep1.particles.flat(), 1e-10);
+    }
+
+    // ---- C  100-step trajectory --------------------------------------------
+    log('\n--- C  100-step verletStep ---');
+    {
+      const initial = ref.verlet_initial;
+      const expStep100 = ref.verlet_step100;
+      const cfg = initial.cfg;
+      const sources = TDE.Util.matToSources(initial.sources);
+      const particles = TDE.Util.matToParticles(initial.particles);
+      for (let k = 0; k < 100; k++) {
+        TDE.Physics.verletStep(sources, particles,
+          cfg.particleMass, cfg.stellarRadius,
+          cfg.energyLoss, cfg.particleRadius, cfg.dt,
+          cfg.vRestThreshold);
+      }
+      const gotSrc = TDE.Util.sourcesToMat(sources);
+      const gotPar = TDE.Util.particlesToMat(particles);
+      assertArrayNear('verletStep100 sources', gotSrc.flat(), expStep100.sources.flat(), 1e-6);
+      assertArrayNear('verletStep100 particles', gotPar.flat(), expStep100.particles.flat(), 1e-6);
+      const E = TDE.Physics.totalEnergy(sources, particles, cfg.particleMass, cfg.stellarRadius);
+      const L = TDE.Physics.angularMomentum(sources, particles, cfg.particleMass);
+      assertNear('verletStep100 totalEnergy', E, expStep100.totalEnergy, 1e-6);
+      assertNear('verletStep100 angularMomentum', L, expStep100.angularMomentum, 1e-6);
+    }
+
+    // Summary
+    log('');
+    log(`=== ${nPass} PASS, ${nFail} FAIL ===`);
+    document.getElementById('results').textContent = out.join('\n');
+    const summary = document.getElementById('summary');
+    if (nFail === 0) {
+      summary.textContent = `ALL ${nPass} CHECKS PASS`;
+      summary.className = 'pass';
+    } else {
+      summary.textContent = `${nFail} of ${nPass + nFail} CHECKS FAILED`;
+      summary.className = 'fail';
+    }
+    window._parityResult = { pass: nPass, fail: nFail, fatal: false };
+  })();
+  </script>
+</body>
+</html>
