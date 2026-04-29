@@ -583,17 +583,135 @@
 
     function updateDiagStrip() {
       const sim = state.sim;
+      const cfg = state.cfg;
       if (!sim) return;
-      document.getElementById('diag-t').textContent = `t = ${sim.t.toFixed(1)}`;
+      // Cluster COM
+      const STRIDE = TDE.Physics.P_STRIDE;
+      const nP = sim.particles.length / STRIDE;
+      let cmx = 0, cmy = 0, cmvx = 0, cmvy = 0;
+      for (let k = 0; k < nP; k++) {
+        const off = k * STRIDE;
+        cmx  += sim.particles[off + 0];
+        cmy  += sim.particles[off + 1];
+        cmvx += sim.particles[off + 2];
+        cmvy += sim.particles[off + 3];
+      }
+      cmx /= nP; cmy /= nP; cmvx /= nP; cmvy /= nP;
+
+      const bcS = TDE.Physics.barycenterOfSources(sim.sources);
+      const sep = Math.hypot(cmx - bcS.x,   cmy - bcS.y);
+      const spd = Math.hypot(cmvx - bcS.vx, cmvy - bcS.vy);
+
+      const bound = TDE.Physics.boundFraction(sim.particles,
+                                                [cmx, cmy, cmvx, cmvy],
+                                                cfg.particleMass);
+      const E = TDE.Physics.totalEnergy(sim.sources, sim.particles,
+                                          cfg.particleMass, cfg.stellarRadius);
+      const L = TDE.Physics.angularMomentum(sim.sources, sim.particles,
+                                              cfg.particleMass);
+      sim.lastBound = bound;
+      sim.lastE = E;
+      sim.lastL = L;
+      document.getElementById('diag-t').textContent     = `t = ${sim.t.toFixed(1)}`;
+      document.getElementById('diag-sep').textContent   = `sep = ${sep.toFixed(1)} lu`;
+      document.getElementById('diag-speed').textContent = `COM v = ${spd.toFixed(2)}`;
+      document.getElementById('diag-bound').textContent = `bound = ${(100*bound).toFixed(0)}%`;
+      document.getElementById('diag-E').textContent     = `E = ${E.toFixed(2)}`;
+      document.getElementById('diag-L').textContent     = `L_z = ${L.toFixed(1)}`;
+    }
+
+    // Lighter update: just t/sep/speed, called on the 3 frames between full updates
+    function updateDiagStripFast() {
+      const sim = state.sim;
+      if (!sim) return;
+      const STRIDE = TDE.Physics.P_STRIDE;
+      const nP = sim.particles.length / STRIDE;
+      let cmx = 0, cmy = 0, cmvx = 0, cmvy = 0;
+      for (let k = 0; k < nP; k++) {
+        const off = k * STRIDE;
+        cmx  += sim.particles[off + 0];
+        cmy  += sim.particles[off + 1];
+        cmvx += sim.particles[off + 2];
+        cmvy += sim.particles[off + 3];
+      }
+      cmx /= nP; cmy /= nP; cmvx /= nP; cmvy /= nP;
+      const bcS = TDE.Physics.barycenterOfSources(sim.sources);
+      const sep = Math.hypot(cmx - bcS.x,   cmy - bcS.y);
+      const spd = Math.hypot(cmvx - bcS.vx, cmvy - bcS.vy);
+      document.getElementById('diag-t').textContent     = `t = ${sim.t.toFixed(1)}`;
+      document.getElementById('diag-sep').textContent   = `sep = ${sep.toFixed(1)} lu`;
+      document.getElementById('diag-speed').textContent = `COM v = ${spd.toFixed(2)}`;
     }
 
     // ---- Button handlers --------------------------------------------------
-    function onStart()       { console.log('Start clicked (M4 will wire animation)'); }
-    function onPauseResume() { console.log('Pause/Resume clicked (M4)'); }
+    let rafId = null;
+    let lastWallTime = 0;
+
+    function frame(now) {
+      // Throttle to cfg.timerPeriod (seconds) like MATLAB's timer Period.
+      const periodMs = state.cfg.timerPeriod * 1000;
+      if (now - lastWallTime >= periodMs) {
+        lastWallTime = now;
+        if (state.runState === 'running' && state.sim) {
+          tickPhysics();
+          Render.draw();
+          state.tickCount++;
+          if ((state.tickCount % 4) === 0) updateDiagStrip();
+          else updateDiagStripFast();
+        }
+      }
+      rafId = requestAnimationFrame(frame);
+    }
+
+    function tickPhysics() {
+      const cfg = state.cfg;
+      const sim = state.sim;
+      TDE.Physics.verletStep(sim.sources, sim.particles,
+                              cfg.particleMass, cfg.stellarRadius,
+                              cfg.energyLoss, cfg.particleRadius, cfg.dt,
+                              cfg.vRestThreshold);
+      sim.t += cfg.dt;
+    }
+
+    function startRAF() {
+      if (rafId !== null) return;
+      lastWallTime = 0;
+      rafId = requestAnimationFrame(frame);
+    }
+    function stopRAF() {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    }
+
+    function onStart() {
+      state.runState = 'running';
+      state.handles.btnPause.textContent = 'Pause';
+      state.handles.btnResetDefaults.disabled = true;
+      startRAF();
+    }
+    function onPauseResume() {
+      if (state.runState === 'running') {
+        state.runState = 'paused';
+        state.handles.btnPause.textContent = 'Resume';
+        state.handles.btnResetDefaults.disabled = false;
+      } else {
+        state.runState = 'running';
+        state.handles.btnPause.textContent = 'Pause';
+        state.handles.btnResetDefaults.disabled = true;
+        startRAF();
+      }
+    }
     function onHelp()        { console.log('Help clicked (M6)'); }
     function onAbout()       { console.log('About clicked (M6)'); }
 
     function onReset() {
+      stopRAF();
+      state.runState = 'paused';
+      state.tickCount = 0;
+      state.handles.btnPause.textContent = 'Resume';
+      state.handles.btnResetDefaults.disabled = false;
       state.sim = Sim.build(state.cfg);
       Render.computeView();
       Render.draw();
@@ -670,6 +788,12 @@
         cfg:     () => state.cfg,
         sim:     () => state.sim,
         onReset, onTheme, onScenarioChange,
+        // Headless step: advance physics N times without RAF/render. For tests.
+        stepN: (n) => {
+          for (let i = 0; i < n; i++) tickPhysics();
+          Render.draw();
+          updateDiagStrip();
+        },
         version: '0.1.0',
       };
     }
