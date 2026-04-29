@@ -45,12 +45,13 @@ Single `index.html` containing:
 - `HelpText` module: ports `parameter_help.m` content for popups
 - `App`: top-level `launchExplorer` + `requestAnimationFrame` loop
 
-Test hooks namespace: `window.TDE` exposes pure modules + state accessors
+Test hooks namespace: `window.TDE_App` exposes pure modules + state accessors
 + headless physics stepping for the parity test page.
 
-## Files in this repo (planned)
+## Files in this repo
 
 - `index.html` — the main app (single-file)
+- `tde_modules.js` — shared JS modules (Defaults, Physics, ICs, Roche, Util)
 - `test_parity.html` — physics parity test runner
 - `physics_reference.json` — MATLAB-generated reference values
 - `dump_parity_reference.m` — MATLAB script to regenerate the reference JSON
@@ -76,29 +77,35 @@ Test hooks namespace: `window.TDE` exposes pure modules + state accessors
 - [x] **M0**: Repo created, initial `PROGRESS.md` and `README.md` pushed.
 - [x] **M1**: `dump_parity_reference.m` written, run, `physics_reference.json` committed.
 - [x] **M2**: JS modules (Defaults, Physics, ICs, Roche) + `test_parity.html`
-       written and committed. Container-side parity test PASS.
+       written and committed. Container-side parity test 44/44 PASS.
 - [x] **M3**: GUI shell (`index.html` with controls panel, canvas, no popups yet)
-       written and committed. Container-side smoke test PASS.
-- [ ] **M4**: Animation loop, particle rendering, simulation runs visibly.
-- [ ] **M5**: All 7 scenarios + ICs working. Theme toggle wired up.
+       written and committed. Container-side smoke test 20/20 PASS.
+- [x] **M4**: Animation loop, particle rendering, simulation runs visibly.
+       Container-side smoke test 20/20 PASS. Energy drift over 100 steps ~3%
+       (collision dissipation by design, energyLoss=0.3).
+- [ ] **M5**: All 7 scenarios + ICs visually verified; theme toggle live-tested.
 - [ ] **M6**: Help and About popups with MathJax math.
 - [ ] **M7**: Final polish, README, screenshots, FEX-style description.
 - [ ] **M8**: GitHub Pages deploy verified.
 
 ## Current state
 
-**M3 done.** GUI shell complete: 52/52 smoke checks PASS in container Chromium.
-Visually verified screenshots for single-parabolic, binary equal-mass, and
-binary unequal-mass scenarios. Per-star Roche circles render with correct
-radii ratio (M1=1000, M2=250 -> R_3D ratio 1.587 = 4^(1/3)).
+**M4 done.** Simulation runs end-to-end:
+- requestAnimationFrame loop throttled to cfg.timerPeriod (default 0.04s = 25fps target)
+- Start/Pause/Resume/Reset semantics correct (matches MATLAB button behavior)
+- Diagnostic readouts populated: t, sep, COM v, bound, E, L_z
+- Full diagnostic refresh every 4th frame; fast subset every frame
+- Energy drift over 100 steps: ~3% (intentional from collision dissipation)
+- Smoke test 20/20 PASS
+- t=10.5 screenshot shows cluster moving away from periapsis with bound=100%
 
-Known not-yet-wired items deferred to M4:
-- Dropdowns and numeric fields don't trigger reset (no event handlers wired)
-- `setCfg` from test hooks doesn't push values back into DOM (form fields stay stale)
-- Start/Pause/Reset/Reset-defaults buttons not wired (no animation loop yet)
-- No keyboard shortcuts
+Note: A parallel Claude session converged on byte-identical M4 code (no diff
+between independently-derived ports). Indicates the JS port is deterministically
+derivable from the MATLAB source.
 
-Next: M4 - wire up the animation loop, button handlers, and event flow.
+Next: M5 — verify all 7 scenario+IC combinations visually with screenshots,
+test theme toggle live during animation, run a longer flyby to see disruption
+behavior.
 
 ## Recovery instructions for a fresh Claude session
 
