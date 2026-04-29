@@ -77,7 +77,7 @@ Test hooks namespace: `window.TDE` exposes pure modules + state accessors
 - [x] **M1**: `dump_parity_reference.m` written, run, `physics_reference.json` committed.
 - [x] **M2**: JS modules (Defaults, Physics, ICs, Roche) + `test_parity.html`
        written and committed. Container-side parity test PASS.
-- [ ] **M3**: GUI shell (`index.html` with controls panel, canvas, no popups yet)
+- [x] **M3**: GUI shell (`index.html` with controls panel, canvas, no popups yet)
        written and committed. Container-side smoke test PASS.
 - [ ] **M4**: Animation loop, particle rendering, simulation runs visibly.
 - [ ] **M5**: All 7 scenarios + ICs working. Theme toggle wired up.
@@ -87,13 +87,20 @@ Test hooks namespace: `window.TDE` exposes pure modules + state accessors
 
 ## Current state
 
-**M2 done.** All 44 parity checks PASS in container Chromium against MATLAB reference data:
-- Pure functions (Roche, Lagrange, binary_ic, cluster_ic): zero diff or float-rounding (~1e-14)
-- Hex offsets: identical set (order of equal-radius offsets doesn't matter for physics)
-- One Verlet step: ~7e-18 max diff (bit-identical to rounding)
-- 100 Verlet steps: ~1e-16 max diff for positions, 6e-14 for energy, 2e-12 for angular momentum
+**M3 done.** Static GUI renders correctly in container Chromium:
+- 22 numeric fields populated from scenarioDefaults, displayed values match cfg
+- Scenario dropdown (single/binary), IC family dropdown, Lagrange dropdown all wired
+- Field enable/disable per relevantFields() rule (greyed-out fields match MATLAB)
+- Roche circles render per-star: equal-mass binary shows identical circles, unequal
+  binary (M1=1000, M2=250) shows ratio 1.587 = 4^(1/3) exactly
+- Theme toggle works (dark <-> light)
+- L4 cluster placement verified at (0, 43.30) for equal-mass binary
+- Smoke test: 20/20 PASS in headless Chromium
 
-Next: M3 — write the GUI shell (`index.html`) without animation/popups.
+No animation yet. Buttons Start/Pause/Help/About are stubs. Next:
+
+M4: animation loop (requestAnimationFrame), Start/Pause/Reset semantics,
+    diagnostic strip live updates.
 
 ## Recovery instructions for a fresh Claude session
 
