@@ -87,20 +87,18 @@ Test hooks namespace: `window.TDE` exposes pure modules + state accessors
 
 ## Current state
 
-**M3 done.** Static GUI renders correctly in container Chromium:
-- 22 numeric fields populated from scenarioDefaults, displayed values match cfg
-- Scenario dropdown (single/binary), IC family dropdown, Lagrange dropdown all wired
-- Field enable/disable per relevantFields() rule (greyed-out fields match MATLAB)
-- Roche circles render per-star: equal-mass binary shows identical circles, unequal
-  binary (M1=1000, M2=250) shows ratio 1.587 = 4^(1/3) exactly
-- Theme toggle works (dark <-> light)
-- L4 cluster placement verified at (0, 43.30) for equal-mass binary
-- Smoke test: 20/20 PASS in headless Chromium
+**M3 done.** GUI shell complete: 52/52 smoke checks PASS in container Chromium.
+Visually verified screenshots for single-parabolic, binary equal-mass, and
+binary unequal-mass scenarios. Per-star Roche circles render with correct
+radii ratio (M1=1000, M2=250 -> R_3D ratio 1.587 = 4^(1/3)).
 
-No animation yet. Buttons Start/Pause/Help/About are stubs. Next:
+Known not-yet-wired items deferred to M4:
+- Dropdowns and numeric fields don't trigger reset (no event handlers wired)
+- `setCfg` from test hooks doesn't push values back into DOM (form fields stay stale)
+- Start/Pause/Reset/Reset-defaults buttons not wired (no animation loop yet)
+- No keyboard shortcuts
 
-M4: animation loop (requestAnimationFrame), Start/Pause/Reset semantics,
-    diagnostic strip live updates.
+Next: M4 - wire up the animation loop, button handlers, and event flow.
 
 ## Recovery instructions for a fresh Claude session
 
