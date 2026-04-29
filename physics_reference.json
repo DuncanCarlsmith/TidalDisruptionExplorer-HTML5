@@ -1,0 +1,778 @@
+{
+  "meta": {
+    "description": "Physics reference values for the HTML5 port parity test",
+    "source": "/Users/duncancarlsmith/Documents/MATLAB/Roche limit/TidalDisruptionExplorerMATLAB/TidalDisruptionExplorer folder",
+    "matlabVer": "25.2.0.3177638 (R2025b) Update 5",
+    "date": "2026-04-29 17:22:57"
+  },
+  "hexN19_pr3_2_eg1": {
+    "inputs": {
+      "N": 19,
+      "particleRadius": 3.2,
+      "edgeGap": 1
+    },
+    "offsets": [
+      [
+        0,
+        0
+      ],
+      [
+        -3.7,
+        -6.4085879880048457
+      ],
+      [
+        3.7,
+        -6.4085879880048457
+      ],
+      [
+        -3.7,
+        6.4085879880048457
+      ],
+      [
+        3.7,
+        6.4085879880048457
+      ],
+      [
+        -7.4,
+        0
+      ],
+      [
+        7.4,
+        0
+      ],
+      [
+        0,
+        -12.817175976009691
+      ],
+      [
+        0,
+        12.817175976009691
+      ],
+      [
+        -11.100000000000001,
+        -6.4085879880048457
+      ],
+      [
+        11.100000000000001,
+        -6.4085879880048457
+      ],
+      [
+        -11.100000000000001,
+        6.4085879880048457
+      ],
+      [
+        11.100000000000001,
+        6.4085879880048457
+      ],
+      [
+        -7.4,
+        -12.817175976009691
+      ],
+      [
+        7.4,
+        -12.817175976009691
+      ],
+      [
+        -7.4,
+        12.817175976009691
+      ],
+      [
+        7.4,
+        12.817175976009691
+      ],
+      [
+        -14.8,
+        0
+      ],
+      [
+        14.8,
+        0
+      ]
+    ]
+  },
+  "roche_single_1250": {
+    "inputs": {
+      "scenarioType": "single",
+      "clusterIC": "parabolic",
+      "sourceMass": 1250,
+      "M1": 1250,
+      "M2": 1250,
+      "stellarRadius": 15,
+      "Nparticles": 19,
+      "particleMass": 1,
+      "particleRadius": 3.2,
+      "edgeGap": 1,
+      "periapsis": 100,
+      "eccentricity": 0,
+      "vInfinity": 0.5,
+      "lagrangePoint": "L4",
+      "impactAngle": 0,
+      "binarySep": 50,
+      "binaryEcc": 0,
+      "binaryStartPhase": 0,
+      "circumbinaryRatio": 1.25,
+      "dt": 0.07,
+      "energyLoss": 0.3,
+      "vRestThreshold": 0.05
+    },
+    "rocheR_3D": 82.030242189723666,
+    "rocheR_disk": 68.381128134114135
+  },
+  "roche_binary_eq_150": {
+    "inputs": {
+      "scenarioType": "binary",
+      "clusterIC": "parabolic",
+      "sourceMass": 1250,
+      "M1": 150,
+      "M2": 150,
+      "stellarRadius": 15,
+      "Nparticles": 19,
+      "particleMass": 1,
+      "particleRadius": 3.2,
+      "edgeGap": 1,
+      "periapsis": 200,
+      "eccentricity": 0,
+      "vInfinity": 0.5,
+      "lagrangePoint": "L4",
+      "impactAngle": 0,
+      "binarySep": 50,
+      "binaryEcc": 0,
+      "binaryStartPhase": 0,
+      "circumbinaryRatio": 1.25,
+      "dt": 0.07,
+      "energyLoss": 0.3,
+      "vRestThreshold": 0.05
+    },
+    "rocheR_3D": [
+      40.460794749709848,
+      40.460794749709848
+    ],
+    "rocheR_disk": [
+      33.728472772138254,
+      33.728472772138254
+    ]
+  },
+  "roche_binary_uneq_1000_250": {
+    "inputs": {
+      "scenarioType": "binary",
+      "clusterIC": "parabolic",
+      "sourceMass": 1250,
+      "M1": 1000,
+      "M2": 250,
+      "stellarRadius": 15,
+      "Nparticles": 19,
+      "particleMass": 1,
+      "particleRadius": 3.2,
+      "edgeGap": 1,
+      "periapsis": 200,
+      "eccentricity": 0,
+      "vInfinity": 0.5,
+      "lagrangePoint": "L4",
+      "impactAngle": 0,
+      "binarySep": 50,
+      "binaryEcc": 0,
+      "binaryStartPhase": 0,
+      "circumbinaryRatio": 1.25,
+      "dt": 0.07,
+      "energyLoss": 0.3,
+      "vRestThreshold": 0.05
+    },
+    "rocheR_3D": [
+      76.150131233274635,
+      47.971576646529876
+    ],
+    "rocheR_disk": [
+      63.479416155429746,
+      39.989526324631306
+    ]
+  },
+  "lagrange_eq": {
+    "inputs": {
+      "M1": 150,
+      "M2": 150,
+      "a": 50
+    },
+    "points": [
+      "L1",
+      "L2",
+      "L3",
+      "L4",
+      "L5"
+    ],
+    "xy": [
+      [
+        0,
+        0
+      ],
+      [
+        59.920307227746,
+        0
+      ],
+      [
+        -59.920307227746,
+        0
+      ],
+      [
+        0,
+        43.301270189221931
+      ],
+      [
+        0,
+        -43.301270189221931
+      ]
+    ]
+  },
+  "lagrange_uneq": {
+    "inputs": {
+      "M1": 1000,
+      "M2": 250,
+      "a": 50
+    },
+    "points": [
+      "L1",
+      "L2",
+      "L3",
+      "L4",
+      "L5"
+    ],
+    "xy": [
+      [
+        -21.9037979269183,
+        0
+      ],
+      [
+        54.141973210112177,
+        0
+      ],
+      [
+        -63.552434536994063,
+        0
+      ],
+      [
+        -15,
+        43.301270189221931
+      ],
+      [
+        -15,
+        -43.301270189221931
+      ]
+    ]
+  },
+  "binary_ic_eq_circ": {
+    "inputs": {
+      "M1": 150,
+      "M2": 150,
+      "a": 50,
+      "e": 0,
+      "phase": 0
+    },
+    "s1": [
+      25,
+      0,
+      -0,
+      1.2247448713915889,
+      0,
+      0,
+      150
+    ],
+    "s2": [
+      -25,
+      -0,
+      0,
+      -1.2247448713915889,
+      0,
+      0,
+      150
+    ]
+  },
+  "binary_ic_uneq_ecc": {
+    "inputs": {
+      "M1": 1000,
+      "M2": 250,
+      "a": 80,
+      "e": 0.4,
+      "phase": 1.0471975511965976
+    },
+    "s1": [
+      5.6000000000000014,
+      9.6994845223857116,
+      -0.747017880833996,
+      0.77632375426014866,
+      0,
+      0,
+      1000
+    ],
+    "s2": [
+      -22.400000000000006,
+      -38.797938089542846,
+      2.988071523335984,
+      -3.1052950170405946,
+      0,
+      0,
+      250
+    ]
+  },
+  "cluster_ic": {
+    "single_circular": {
+      "inputs": {
+        "scenarioType": "single",
+        "clusterIC": "circular",
+        "sourceMass": 1250,
+        "M1": 1250,
+        "M2": 1250,
+        "stellarRadius": 15,
+        "Nparticles": 19,
+        "particleMass": 1,
+        "particleRadius": 3.2,
+        "edgeGap": 1,
+        "periapsis": 100,
+        "eccentricity": 0,
+        "vInfinity": 0.5,
+        "lagrangePoint": "L4",
+        "impactAngle": 0,
+        "binarySep": 50,
+        "binaryEcc": 0,
+        "binaryStartPhase": 0,
+        "circumbinaryRatio": 1.25,
+        "dt": 0.07,
+        "energyLoss": 0.3,
+        "vRestThreshold": 0.05
+      },
+      "x": 100,
+      "y": 0,
+      "vx": 0,
+      "vy": 3.562302626111375
+    },
+    "single_elliptical": {
+      "inputs": {
+        "scenarioType": "single",
+        "clusterIC": "elliptical",
+        "sourceMass": 1250,
+        "M1": 1250,
+        "M2": 1250,
+        "stellarRadius": 15,
+        "Nparticles": 19,
+        "particleMass": 1,
+        "particleRadius": 3.2,
+        "edgeGap": 1,
+        "periapsis": 100,
+        "eccentricity": 0.5,
+        "vInfinity": 0.5,
+        "lagrangePoint": "L4",
+        "impactAngle": 0,
+        "binarySep": 50,
+        "binaryEcc": 0,
+        "binaryStartPhase": 0,
+        "circumbinaryRatio": 1.25,
+        "dt": 0.07,
+        "energyLoss": 0.3,
+        "vRestThreshold": 0.05
+      },
+      "x": 100,
+      "y": 0,
+      "vx": 0,
+      "vy": 4.3629118716746964
+    },
+    "single_parabolic": {
+      "inputs": {
+        "scenarioType": "single",
+        "clusterIC": "parabolic",
+        "sourceMass": 1250,
+        "M1": 1250,
+        "M2": 1250,
+        "stellarRadius": 15,
+        "Nparticles": 19,
+        "particleMass": 1,
+        "particleRadius": 3.2,
+        "edgeGap": 1,
+        "periapsis": 100,
+        "eccentricity": 0,
+        "vInfinity": 0.5,
+        "lagrangePoint": "L4",
+        "impactAngle": 0,
+        "binarySep": 50,
+        "binaryEcc": 0,
+        "binaryStartPhase": 0,
+        "circumbinaryRatio": 1.25,
+        "dt": 0.07,
+        "energyLoss": 0.3,
+        "vRestThreshold": 0.05
+      },
+      "x": 100,
+      "y": 0,
+      "vx": 0,
+      "vy": 5.0378566871239991
+    },
+    "single_hyperbolic": {
+      "inputs": {
+        "scenarioType": "single",
+        "clusterIC": "hyperbolic",
+        "sourceMass": 1250,
+        "M1": 1250,
+        "M2": 1250,
+        "stellarRadius": 15,
+        "Nparticles": 19,
+        "particleMass": 1,
+        "particleRadius": 3.2,
+        "edgeGap": 1,
+        "periapsis": 100,
+        "eccentricity": 0,
+        "vInfinity": 0.5,
+        "lagrangePoint": "L4",
+        "impactAngle": 0,
+        "binarySep": 50,
+        "binaryEcc": 0,
+        "binaryStartPhase": 0,
+        "circumbinaryRatio": 1.25,
+        "dt": 0.07,
+        "energyLoss": 0.3,
+        "vRestThreshold": 0.05
+      },
+      "x": 100,
+      "y": 0,
+      "vx": 0,
+      "vy": 5.0626080235388553
+    },
+    "binary_lagrange": {
+      "inputs": {
+        "scenarioType": "binary",
+        "clusterIC": "lagrange",
+        "sourceMass": 1250,
+        "M1": 150,
+        "M2": 150,
+        "stellarRadius": 15,
+        "Nparticles": 19,
+        "particleMass": 1,
+        "particleRadius": 3.2,
+        "edgeGap": 1,
+        "periapsis": 60,
+        "eccentricity": 0,
+        "vInfinity": 0.5,
+        "lagrangePoint": "L4",
+        "impactAngle": 0,
+        "binarySep": 50,
+        "binaryEcc": 0,
+        "binaryStartPhase": 0,
+        "circumbinaryRatio": 1.25,
+        "dt": 0.07,
+        "energyLoss": 0.3,
+        "vRestThreshold": 0.05
+      },
+      "x": 0,
+      "y": 43.301270189221931,
+      "vx": -2.1213203435596424,
+      "vy": 0
+    },
+    "binary_circumbinary": {
+      "inputs": {
+        "scenarioType": "binary",
+        "clusterIC": "circumbinary",
+        "sourceMass": 1250,
+        "M1": 150,
+        "M2": 150,
+        "stellarRadius": 15,
+        "Nparticles": 19,
+        "particleMass": 1,
+        "particleRadius": 3.2,
+        "edgeGap": 1,
+        "periapsis": 60,
+        "eccentricity": 0,
+        "vInfinity": 0.5,
+        "lagrangePoint": "L4",
+        "impactAngle": 0,
+        "binarySep": 50,
+        "binaryEcc": 0,
+        "binaryStartPhase": 0,
+        "circumbinaryRatio": 1.25,
+        "dt": 0.07,
+        "energyLoss": 0.3,
+        "vRestThreshold": 0.05
+      },
+      "x": 62.5,
+      "y": 0,
+      "vx": 0,
+      "vy": 2.25920339943087
+    },
+    "binary_parabolic": {
+      "inputs": {
+        "scenarioType": "binary",
+        "clusterIC": "parabolic",
+        "sourceMass": 1250,
+        "M1": 150,
+        "M2": 150,
+        "stellarRadius": 15,
+        "Nparticles": 19,
+        "particleMass": 1,
+        "particleRadius": 3.2,
+        "edgeGap": 1,
+        "periapsis": 200,
+        "eccentricity": 0,
+        "vInfinity": 0.5,
+        "lagrangePoint": "L4",
+        "impactAngle": 0,
+        "binarySep": 50,
+        "binaryEcc": 0,
+        "binaryStartPhase": 0,
+        "circumbinaryRatio": 1.25,
+        "dt": 0.07,
+        "energyLoss": 0.3,
+        "vRestThreshold": 0.05
+      },
+      "x": 200,
+      "y": 0,
+      "vx": -0,
+      "vy": 1.7860571099491751
+    }
+  },
+  "verlet_initial": {
+    "cfg": {
+      "particleMass": 1,
+      "stellarRadius": 15,
+      "particleRadius": 3.2,
+      "edgeGap": 1,
+      "energyLoss": 0.3,
+      "vRestThreshold": 0.05,
+      "dt": 0.07
+    },
+    "sources": [
+      [
+        -25,
+        0,
+        0,
+        -0.9,
+        0.060138367852262939,
+        0,
+        150
+      ],
+      [
+        25,
+        0,
+        0,
+        0.9,
+        -0.059771165388159263,
+        1.8070036208091742E-22,
+        150
+      ]
+    ],
+    "particles": [
+      [
+        200,
+        0,
+        0,
+        0,
+        -0.0078609221466364315,
+        0
+      ],
+      [
+        207.4,
+        0,
+        0,
+        0,
+        -0.058917544975561773,
+        -1.3010426069826053E-18
+      ],
+      [
+        192.6,
+        0,
+        0,
+        0,
+        0.043123731415714316,
+        0
+      ],
+      [
+        203.7,
+        6.4085879880048457,
+        0,
+        0,
+        -0.033368513529211011,
+        -0.044962735440987993
+      ],
+      [
+        196.3,
+        6.4085879880048457,
+        0,
+        0,
+        0.017655696574676923,
+        -0.044993764239251569
+      ],
+      [
+        203.7,
+        -6.4085879880048457,
+        0,
+        0,
+        -0.033368513529211018,
+        0.044962735440987993
+      ],
+      [
+        196.3,
+        -6.4085879880048457,
+        0,
+        0,
+        0.017655696574676923,
+        0.044993764239251569
+      ]
+    ]
+  },
+  "verlet_step1": {
+    "sources": [
+      [
+        -24.999852660998762,
+        -0.063000000000000014,
+        0.0042096904296823265,
+        -0.89999470660112113,
+        0.060138501567232105,
+        0.00015123996796697459,
+        150
+      ],
+      [
+        24.999853560644798,
+        0.063000000000000014,
+        -0.0041839862642164966,
+        0.89999470507381962,
+        -0.05977129930374063,
+        -0.0001512836051550058,
+        150
+      ]
+    ],
+    "particles": [
+      [
+        199.99998074074074,
+        0,
+        -0.00055026439479088332,
+        3.2677041043411125E-8,
+        -0.0078609177045316642,
+        9.3362974409746072E-7
+      ],
+      [
+        207.39985565201482,
+        -3.1875543871073837E-21,
+        -0.0041242899310186751,
+        2.8152853365870022E-8,
+        -0.058919310196400371,
+        8.0436723902615875E-7
+      ],
+      [
+        192.60010565314195,
+        0,
+        0.0030187233373532418,
+        3.8153404833350024E-8,
+        0.043125506794378293,
+        1.0900972809528577E-6
+      ],
+      [
+        203.69991824714185,
+        6.4084778293030151,
+        -0.0023358305217823084,
+        -0.0031474147279519382,
+        -0.033369501378854936,
+        -0.044963399643353087
+      ],
+      [
+        196.30004325645663,
+        6.40847775328246,
+        0.0012359249969297395,
+        -0.0031495817852669806,
+        0.0176564461947442,
+        -0.04499428676837644
+      ],
+      [
+        203.69991824714185,
+        -6.4084778293030151,
+        -0.0023358227303337739,
+        0.0031474748722891696,
+        -0.033369278766039664,
+        0.044965118052988279
+      ],
+      [
+        196.30004325645663,
+        -6.40847775328246,
+        0.0012359344237681065,
+        0.0031496517528676708,
+        0.017656715532983258,
+        0.044996285842681866
+      ]
+    ]
+  },
+  "verlet_step100": {
+    "sources": [
+      [
+        -23.521182965411182,
+        -6.1741769988254225,
+        0.42405987732068456,
+        -0.84539188146790034,
+        0.061453695721507169,
+        0.016095187423179086,
+        150
+      ],
+      [
+        23.530171380048689,
+        6.1741422565731154,
+        -0.42149401492820465,
+        0.845377243746437,
+        -0.061088403184556758,
+        -0.01609918953709465,
+        150
+      ]
+    ],
+    "particles": [
+      [
+        199.67976552278151,
+        0.0020785772185272756,
+        -0.20162048805607347,
+        -0.036646030472062274,
+        -0.008505816368136682,
+        -0.00013875562559203025
+      ],
+      [
+        206.16173674097834,
+        -0.047579021159631134,
+        -0.11213688631068119,
+        -0.053054293578970908,
+        -0.072419667684344907,
+        -0.00052257999102171078
+      ],
+      [
+        193.26752679526246,
+        0.0021805774909648651,
+        -0.19940334946296828,
+        0.0017130067318002749,
+        0.058084246586265979,
+        0.00016014228995990586
+      ],
+      [
+        203.07775906474086,
+        5.8842252894354834,
+        0.031037676259895536,
+        0.38102087734887563,
+        -0.041726874460405433,
+        -0.055582285583520727
+      ],
+      [
+        196.69115228585846,
+        5.7245054681302587,
+        0.03311085569769643,
+        0.19624353031199565,
+        0.025563554483845854,
+        -0.056965419819985819
+      ],
+      [
+        203.09094752298572,
+        -5.8151522187743,
+        0.032297608722992019,
+        -0.28191639971920573,
+        -0.041401058207146582,
+        0.056451119711681826
+      ],
+      [
+        196.68284987176636,
+        -5.7450473344959061,
+        0.031835224277141583,
+        -0.20516503240306752,
+        0.025611735107360003,
+        0.057198096105812724
+      ]
+    ],
+    "totalEnergy": -341.56291367575432,
+    "angularMomentum": 6750.0000000000073
+  }
+}
