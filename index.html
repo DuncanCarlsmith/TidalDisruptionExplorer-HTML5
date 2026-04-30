@@ -188,6 +188,65 @@
       margin: 0;
     }
     input[type="number"] { -moz-appearance: textfield; }
+
+    /* =========================================================================
+       Modal popup (M6b)
+       ========================================================================= */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-overlay.visible { display: flex; }
+    .modal-window {
+      background: var(--panel-bg);
+      color: var(--panel-fg);
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      width: min(720px, 92vw);
+      max-height: 86vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    }
+    .modal-header {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-header h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .modal-close {
+      width: 28px; height: 28px;
+      padding: 0;
+      font-size: 18px;
+      line-height: 1;
+      background: transparent;
+      border: 1px solid var(--input-border);
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--panel-fg);
+    }
+    .modal-close:hover { background: var(--btn-hover); }
+    .modal-body {
+      padding: 12px 18px 16px 18px;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .modal-body p {
+      margin: 0 0 0.8em 0;
+    }
+    .modal-body p:last-child { margin-bottom: 0; }
   </style>
 </head>
 <body>
@@ -209,7 +268,19 @@
     </div>
   </div>
 
+  <!-- Modal popup (M6b) -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 id="modal-title">Title</h3>
+        <button class="modal-close" id="modal-close" title="Close" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
   <script src="tde_modules.js"></script>
+  <script src="help_text.js"></script>
   <script>
   const App = (function () {
     'use strict';
@@ -703,8 +774,8 @@
         startRAF();
       }
     }
-    function onHelp()        { console.log('Help clicked (M6)'); }
-    function onAbout()       { console.log('About clicked (M6)'); }
+    function onHelp()        { Modal.show('Help', 'Help content placeholder (M6c will populate this).'); }
+    function onAbout()       { Modal.show('About', 'About content placeholder (M6c will populate this).'); }
 
     function onReset() {
       stopRAF();
@@ -775,9 +846,75 @@
       onReset();
     }
 
+    // ---- Modal popup (M6b) ----------------------------------------------
+    const Modal = {};
+    Modal.overlay = null;
+    Modal.titleEl = null;
+    Modal.bodyEl  = null;
+    Modal.closeEl = null;
+    Modal.isOpen  = false;
+    Modal._wasRunning = false;
+
+    Modal.attach = function () {
+      Modal.overlay = document.getElementById('modal-overlay');
+      Modal.titleEl = document.getElementById('modal-title');
+      Modal.bodyEl  = document.getElementById('modal-body');
+      Modal.closeEl = document.getElementById('modal-close');
+
+      Modal.closeEl.addEventListener('click', Modal.hide);
+      // Click on overlay (outside the window) to close
+      Modal.overlay.addEventListener('click', (ev) => {
+        if (ev.target === Modal.overlay) Modal.hide();
+      });
+      // Escape key to close
+      document.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Escape' && Modal.isOpen) Modal.hide();
+      });
+    };
+
+    // Show a modal with a title and content (string of text or HTML node).
+    Modal.show = function (title, content) {
+      Modal.titleEl.textContent = title;
+      // Accept either a string (treated as plain text -> wrap in <p>) or a
+      // DOM node (used as-is by M6c when richer content is needed).
+      Modal.bodyEl.innerHTML = '';
+      if (typeof content === 'string') {
+        const p = document.createElement('p');
+        p.textContent = content;
+        Modal.bodyEl.appendChild(p);
+      } else if (content instanceof Node) {
+        Modal.bodyEl.appendChild(content);
+      }
+      // Pause the simulation while modal is open (don't lose physics during reading)
+      Modal._wasRunning = (state.runState === 'running');
+      if (Modal._wasRunning) {
+        state.runState = 'paused';
+        state.handles.btnPause.textContent = 'Resume';
+        state.handles.btnResetDefaults.disabled = false;
+      }
+      Modal.overlay.classList.add('visible');
+      Modal.overlay.setAttribute('aria-hidden', 'false');
+      Modal.isOpen = true;
+    };
+
+    Modal.hide = function () {
+      Modal.overlay.classList.remove('visible');
+      Modal.overlay.setAttribute('aria-hidden', 'true');
+      Modal.isOpen = false;
+      // Resume if we paused on open
+      if (Modal._wasRunning) {
+        state.runState = 'running';
+        state.handles.btnPause.textContent = 'Pause';
+        state.handles.btnResetDefaults.disabled = true;
+        startRAF();
+        Modal._wasRunning = false;
+      }
+    };
+
     function init() {
       document.documentElement.setAttribute('data-theme', state.cfg.themeMode || 'dark');
       Render.attach();
+      Modal.attach();
       buildControls();
       state.sim = Sim.build(state.cfg);
       Render.computeView();
@@ -788,6 +925,7 @@
         cfg:     () => state.cfg,
         sim:     () => state.sim,
         onReset, onTheme, onScenarioChange,
+        Modal: Modal,
         // Headless step: advance physics N times without RAF/render. For tests.
         stepN: (n) => {
           for (let i = 0; i < n; i++) tickPhysics();
