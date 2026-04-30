@@ -1,0 +1,6 @@
+# Screenshots produced by harnesses are regenerable; don't commit them
+*.png
+
+# Node
+node_modules/
+package-lock.json

@@ -1,0 +1,22 @@
+{
+  "name": "tidal-disruption-explorer-tests",
+  "version": "0.1.0",
+  "description": "Test harnesses for Tidal Disruption Explorer HTML5",
+  "private": true,
+  "scripts": {
+    "test:m3":  "node tests/run_smoke_m3.js",
+    "test:m4":  "node tests/run_smoke_m4.js",
+    "test:m5a": "node tests/run_smoke_m5a.js",
+    "test:m5b": "node tests/run_smoke_m5b.js",
+    "test:m5c": "node tests/run_smoke_m5c.js",
+    "test:m5d": "node tests/run_smoke_m5d.js",
+    "test:m6a": "node tests/run_smoke_m6a.js",
+    "test:m6b": "node tests/run_smoke_m6b.js",
+    "test:m6c": "node tests/run_smoke_m6c.js",
+    "test:m6d": "node tests/run_smoke_m6d.js",
+    "test:all": "node tests/run_smoke_m6a.js && node tests/run_smoke_m3.js && node tests/run_smoke_m4.js && node tests/run_smoke_m5a.js && node tests/run_smoke_m5b.js && node tests/run_smoke_m5c.js && node tests/run_smoke_m5d.js && node tests/run_smoke_m6b.js && node tests/run_smoke_m6c.js && node tests/run_smoke_m6d.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.40.0"
+  }
+}

@@ -114,6 +114,10 @@ The About modal lists six pedagogical experiments. Highlights:
 | `test_parity.html`         | Standalone parity test runner (browse to it directly)  |
 | `physics_reference.json`   | MATLAB-generated reference values for parity tests     |
 | `dump_parity_reference.m`  | MATLAB script to regenerate the reference JSON         |
+| `tests/run_smoke_*.js`     | Test harnesses for milestones M3..M6d (see HARNESSES.md) |
+| `package.json`             | Node deps for harnesses (Playwright)                   |
+| `HARNESSES.md`             | How to install Playwright and run the harnesses        |
+| `LICENSE`                  | MIT license text                                       |
 | `PROGRESS.md`              | Build journal: every milestone, every test count, recovery instructions |
 | `PROGRESS_*_pre_*.md`      | Timestamped pre-edit backups of `PROGRESS.md` (one per milestone) |
 
@@ -146,4 +150,6 @@ functions) and ~1e-6 (100-step trajectories).
 
 ## License
 
-(c) Duncan Carlsmith 2026. License TBD.
+MIT. See `LICENSE` for the full text.
+
+(c) Duncan Carlsmith 2026.

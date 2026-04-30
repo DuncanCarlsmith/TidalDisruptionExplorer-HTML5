@@ -99,39 +99,45 @@ Test hooks namespace: `window.TDE_App` exposes pure modules + state accessors
   - [x] **M7a**: README rewrite (live-demo instructions, scenarios table, physics summary, experiments, repo layout, build state)
   - [x] **M7b**: Page polish (SVG favicon inline as data URL; about-text URL corrected to actual repo)
   - [ ] **M7c**: Final regression smoke + documentation screenshots (deferred; needs container Chromium)
-- [x] **M8**: GitHub Pages deploy verified (live at https://duncancarlsmith.github.io/TidalDisruptionExplorer-HTML5/)
+- [ ] **M8**: GitHub Pages deploy verified.
 
 ## Current state
 
-**Recovery turn complete (2026-04-30 evening).** GitHub Pages is live at
-https://duncancarlsmith.github.io/TidalDisruptionExplorer-HTML5/.
-The site has been verified live (HTTP 200) and is publicly accessible.
+**M7a + M7b done; M7c deferred.**
 
-License decision: **MIT**. `LICENSE` file added; README updated to match.
+M7a: README.md rewritten from a stub to a full project README with: live-demo
+instructions (clone + python3 -m http.server), what the canvas shows, the
+scenarios+IC table, physics summary, six suggested experiments (cribbed from
+the About modal), repo layout, build-state ledger, and a link back to the
+MATLAB original.
 
-Test-harness recovery: the 10 `run_smoke_*.js` harnesses (originally lost
-with the dev sandbox) have been reconstructed from the conversation log
-and committed under `tests/`. They are accompanied by `package.json` (for
-the Playwright dep) and `HARNESSES.md` (full instructions including
-prerequisites, how to run, expected PASS counts, and a recovery-note
-caveat that the reconstructed source has not been re-verified end-to-end
-since recovery).
+M7b: cosmetic polish to index.html and help_text.js. Added an SVG favicon
+inlined as a data URL (no asset file to ship): a yellow source disk plus
+three blue cluster particles. Existing viewport meta tag was already in
+place from M3. Fixed the wrong duncancarlsmith.github.io URL in the
+About-text aboutText[3] -- it now points at the real repo URL
+(github.com/DuncanCarlsmith/TidalDisruptionExplorer-HTML5).
 
-The harness reconstruction matches the documented test logic and
-selector usage exactly. All test hooks (`window.TDE_App.state()`,
-`stepN()`, etc.) are confirmed present in `index.html`. They should run
-cleanly on first try; if they don't, the most likely culprit is a small
-selector or hook-name discrepancy that's quick to fix.
+M7c (regression smoke + screenshots) is deferred to a future turn that has
+the container bash_tool available. The pattern for that turn:
 
-M7c (regression smoke + screenshot capture for the README) remains
-deferred until container `bash_tool` is available again. With harnesses
-now committed in the repo, M7c is straightforward: `npm install` then
-`npm run test:all`. Any failures point at concrete issues to fix; any
-screenshots produced (saved as `tests/m*_*.png` per harness) can be
-cherry-picked into the README.
+1. Sync the latest Mac files into /home/claude/tde/ (curl GET each via ngrok).
+2. Re-run run_smoke_m5d.js as a regression test (theme toggle in latest build).
+3. Capture four documentation screenshots in container Chromium:
+   - hero: single + parabolic, t~5 (mid-flyby with mild stretching)
+   - disruption: single + parabolic + periapsis=30, t~14 (tidal stream)
+   - lagrange L4: binary + lagrange + L4 (equilateral triangle)
+   - about with math: About modal open, MathJax-rendered Roche eqs
+4. Upload the screenshots to the Mac via /upload + mv to repo.
+5. Add a 'Screenshots' section to README pointing at them.
+6. Commit M7c.
 
-Next sub-milestone: M7c (when bash_tool returns) or M8 (already done!).
-After M7c, project is fully complete.
+No changes to physics, GUI, or the test pattern. M8 (GitHub Pages enable)
+can be done either before or after M7c -- it's independent and only needs
+the gh CLI via osascript. See ~/Documents/MATLAB/skills/github-pages/SKILL-static-app-deploy.md
+for the recipe.
+
+Next sub-milestone: M8 (offered now) or M7c (when bash_tool returns).
 
 ## Recovery instructions for a fresh Claude session
 
