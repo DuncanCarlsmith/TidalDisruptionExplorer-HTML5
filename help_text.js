@@ -283,7 +283,8 @@ const TDE_HelpText = (function () {
     '',
     'A pedagogical 2D N-body simulation of how a self-gravitating cluster of ' +
     'particles is deformed and disrupted by tidal forces from one or two massive ' +
-    'sources. HTML5/JavaScript port of the MATLAB Live Script of the same name.',
+    'sources. HTML5/JavaScript port of the MATLAB Live Script of the same name. ' +
+    'Source: github.com/DuncanCarlsmith/TidalDisruptionExplorer-HTML5',
     '',
     'PHYSICS',
     '',
