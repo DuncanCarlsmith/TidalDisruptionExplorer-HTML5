@@ -247,6 +247,57 @@
       margin: 0 0 0.8em 0;
     }
     .modal-body p:last-child { margin-bottom: 0; }
+
+    /* Help/About content styling (M6c) */
+    .modal-body .help-section {
+      margin: 1.2em 0 0.4em 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--panel-fg);
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 4px;
+    }
+    .modal-body .help-section:first-child { margin-top: 0; }
+    .modal-body .help-entry {
+      margin: 0 0 0.9em 0;
+    }
+    .modal-body .help-entry .help-label {
+      font-weight: 600;
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 12px;
+      color: var(--panel-fg);
+    }
+    .modal-body .help-entry .help-units {
+      font-size: 11px;
+      color: var(--label-fg);
+      font-style: italic;
+      margin-left: 0.5em;
+    }
+    .modal-body .help-entry .help-desc {
+      margin-top: 2px;
+      font-size: 12.5px;
+      color: var(--panel-fg);
+      white-space: pre-wrap;
+    }
+    .modal-body .about-section-heading {
+      font-weight: 700;
+      font-size: 14px;
+      margin: 1.2em 0 0.4em 0;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 4px;
+    }
+    .modal-body .about-section-heading:first-child { margin-top: 0; }
+    .modal-body .about-paragraph {
+      margin: 0 0 0.7em 0;
+      white-space: pre-wrap;
+    }
+    .modal-body .about-formula {
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 12.5px;
+      margin: 0.2em 0 0.7em 1.5em;
+      color: var(--panel-fg);
+    }
   </style>
 </head>
 <body>
@@ -774,8 +825,109 @@
         startRAF();
       }
     }
-    function onHelp()        { Modal.show('Help', 'Help content placeholder (M6c will populate this).'); }
-    function onAbout()       { Modal.show('About', 'About content placeholder (M6c will populate this).'); }
+    // ---- Help and About content builders (M6c) --------------------------
+    function buildHelpContent() {
+      const root = document.createElement('div');
+
+      // Header paragraph
+      const headerLines = TDE_HelpText.helpHeader.split('\n\n');
+      for (const para of headerLines) {
+        const p = document.createElement('p');
+        p.textContent = para;
+        root.appendChild(p);
+      }
+
+      // Section: Numeric parameters
+      const secParams = document.createElement('div');
+      secParams.className = 'help-section';
+      secParams.textContent = 'NUMERIC PARAMETERS';
+      root.appendChild(secParams);
+
+      // Iterate in the same order as the GUI controls panel.
+      for (const [labelText, cfgKey] of PARAM_TABLE) {
+        const entry = TDE_HelpText.params[cfgKey];
+        if (!entry) continue;
+        root.appendChild(makeHelpEntry(entry));
+      }
+
+      // Section: Diagnostic readouts
+      const secDiags = document.createElement('div');
+      secDiags.className = 'help-section';
+      secDiags.textContent = 'DIAGNOSTIC READOUTS';
+      root.appendChild(secDiags);
+
+      const diagOrder = ['t', 'sep', 'COM_v', 'bound', 'E', 'L_z'];
+      for (const key of diagOrder) {
+        const entry = TDE_HelpText.diagnostics[key];
+        if (!entry) continue;
+        root.appendChild(makeHelpEntry(entry));
+      }
+
+      return root;
+    }
+
+    function makeHelpEntry(entry) {
+      const div = document.createElement('div');
+      div.className = 'help-entry';
+      const head = document.createElement('div');
+      const lbl  = document.createElement('span');
+      lbl.className = 'help-label';
+      lbl.textContent = entry.label;
+      const units = document.createElement('span');
+      units.className = 'help-units';
+      // Avoid double parens when units string already has parens (e.g. "s (wall clock)")
+      const u = entry.units || '';
+      units.textContent = (u.includes('(')) ? u : ('(' + u + ')');
+      head.appendChild(lbl);
+      head.appendChild(units);
+      div.appendChild(head);
+      const desc = document.createElement('div');
+      desc.className = 'help-desc';
+      desc.textContent = entry.description;
+      div.appendChild(desc);
+      return div;
+    }
+
+    function buildAboutContent() {
+      const root = document.createElement('div');
+      // The aboutText array is a sequence of paragraphs, with section
+      // headings (all-caps lines) and indented formula lines (start with
+      // 4 spaces). Render each accordingly.
+      for (const line of TDE_HelpText.aboutText) {
+        if (line === '') continue;
+        if (isAboutHeading(line)) {
+          const h = document.createElement('div');
+          h.className = 'about-section-heading';
+          h.textContent = line;
+          root.appendChild(h);
+        } else if (line.startsWith('    ')) {
+          const f = document.createElement('div');
+          f.className = 'about-formula';
+          f.textContent = line.trim();
+          root.appendChild(f);
+        } else {
+          const p = document.createElement('div');
+          p.className = 'about-paragraph';
+          p.textContent = line;
+          root.appendChild(p);
+        }
+      }
+      return root;
+    }
+
+    function isAboutHeading(line) {
+      // A heading is short, mostly-uppercase (allowing "vs" / "to" etc.),
+      // and at least 4 chars long. Rule: at least 4 letters AND at least
+      // 70% of the letters are uppercase.
+      if (line.length < 4 || line.length > 40) return false;
+      const letters = line.replace(/[^A-Za-z]/g, '');
+      if (letters.length < 4) return false;
+      const upper = letters.replace(/[^A-Z]/g, '');
+      return upper.length / letters.length >= 0.7;
+    }
+
+    function onHelp()        { Modal.show('Help', buildHelpContent()); }
+    function onAbout()       { Modal.show('About', buildAboutContent()); }
 
     function onReset() {
       stopRAF();
