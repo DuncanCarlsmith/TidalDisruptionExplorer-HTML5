@@ -46,7 +46,7 @@ const TDE_HelpText = (function () {
 
   params.energyLoss = mk('energyLoss', 'dimensionless', [
     'Fraction of normal-direction kinetic energy lost per dissipative collision.',
-    'Coefficient of restitution: e = sqrt(1 - energyLoss). Range 0 (perfectly ' +
+    'Coefficient of restitution: \\(e = \\sqrt{1 - \\mathrm{energyLoss}}\\). Range 0 (perfectly ' +
     'elastic, KE-conserving) to 1 (perfectly inelastic, normal velocity zeroed). ' +
     'Tangential velocity is never affected. Higher values give more cohesive ' +
     'cluster behavior post-impact; 0.3 is a typical icy-particle value.',
@@ -108,10 +108,10 @@ const TDE_HelpText = (function () {
 
   params.sourceMass = mk('sourceMass', 'mu', [
     'Mass of the single source (used when scenario = single).',
-    'Sets the orbital timescale via Kepler: T = 2*pi*sqrt(a^3 / (G*M)). Doubling ' +
-    'sourceMass roughly halves the period at fixed orbital radius. The scenario ' +
-    'also auto-uses max(M1, M2) as the source mass for binary Roche-limit ' +
-    'calculations.',
+    'Sets the orbital timescale via Kepler\'s third law: ' +
+    '\\(T = 2\\pi \\sqrt{a^3/(GM)}\\). Doubling sourceMass roughly halves the ' +
+    'period at fixed orbital radius. The scenario also auto-uses max(M1, M2) as ' +
+    'the source mass for binary Roche-limit calculations.',
   ]);
 
   params.stellarRadius = mk('stellarRadius', 'lu', [
@@ -165,16 +165,16 @@ const TDE_HelpText = (function () {
 
   params.M2 = mk('M2', 'mu', [
     'Mass of the second star in the binary scenario.',
-    'Mass ratio mu = M2 / (M1 + M2) controls Lagrange-point geometry and ' +
-    'stability. L4/L5 are linearly stable only for mu < 0.0385 (the Routh-Hurwitz ' +
-    'threshold).',
+    'Mass ratio \\(\\mu = M_2 / (M_1 + M_2)\\) controls Lagrange-point geometry and ' +
+    'stability. L4/L5 are linearly stable only for \\(\\mu < 0.0385\\) (the ' +
+    'Routh-Hurwitz threshold).',
   ]);
 
   params.binarySep = mk('binarySep', 'lu', [
     'Semi-major axis of the binary orbit (separation between stars in circular ' +
     'case).',
-    'Sets the binary orbital period: T_binary = 2*pi*sqrt(sep^3 / (G*(M1+M2))). ' +
-    'T scales as sep^1.5. The default 150 lu with M1=M2=1250 gives T ~ 230 tu. ' +
+    'Sets the binary orbital period: \\(T_\\mathrm{binary} = 2\\pi \\sqrt{a^3/(G(M_1+M_2))}\\). ' +
+    '\\(T \\propto a^{3/2}\\). The default 150 lu with M1=M2=1250 gives T ~ 230 tu. ' +
     'Shrink to ~80-100 to make the binary spin visibly fast; expand to ~250-300 ' +
     'for slower stately orbits where L4/L5 librations are easier to see.',
   ]);
@@ -253,8 +253,8 @@ const TDE_HelpText = (function () {
     'Fraction of cluster particles that are gravitationally bound to the cluster.',
     'A particle is bound when its kinetic energy relative to the cluster COM is ' +
     'less than its negative potential energy in the cluster monopole field: ' +
-    '0.5*v_rel^2 - G*M_cluster/r_to_COM < 0. Drops as tidal stripping unbinds ' +
-    'particles during a close encounter. Updated every 4th frame to save ' +
+    '\\(\\tfrac{1}{2} v_\\mathrm{rel}^2 - GM_c/r < 0\\). Drops as tidal stripping ' +
+    'unbinds particles during a close encounter. Updated every 4th frame to save ' +
     'computation.',
   ]);
 
@@ -269,7 +269,7 @@ const TDE_HelpText = (function () {
 
   diagnostics.L_z = mk('L_z', 'mu * lu^2 / tu', [
     'z-component of total angular momentum about the origin.',
-    'Sum of m_i * (x_i * vy_i - y_i * vx_i) over all bodies (sources and ' +
+    'Sum \\(\\sum_i m_i (x_i v_{y,i} - y_i v_{x,i})\\) over all bodies (sources and ' +
     'particles). Conserved exactly by velocity-Verlet for any energyLoss because ' +
     'collision impulses are along the contact normal (central forces), conserving ' +
     'angular momentum about any point. Drift here means a numerical bug; should ' +
@@ -295,9 +295,9 @@ const TDE_HelpText = (function () {
     'When tidal forces dominate, the cluster disrupts. The threshold separation ' +
     'is the Roche limit. For a fluid satellite of density rho_s orbiting a ' +
     'primary of density rho_M and radius R_M:',
-    '    d_Roche_fluid = 2.44 * R_M * (rho_M / rho_s)^(1/3).',
+    '    \\[ d_\\mathrm{Roche,fluid} = 2.44 \\, R_M \\left( \\frac{\\rho_M}{\\rho_s} \\right)^{1/3} \\]',
     'For a rigid satellite (no internal flow) the prefactor changes:',
-    '    d_Roche_rigid = R_M * (2 * rho_M / rho_s)^(1/3).',
+    '    \\[ d_\\mathrm{Roche,rigid} = R_M \\left( \\frac{2 \\rho_M}{\\rho_s} \\right)^{1/3} \\]',
     'The cluster in this simulator is somewhere between these limits because ' +
     'hard-disk collisions provide partial cohesion but the cluster has no ' +
     'internal tensile strength.',
@@ -328,7 +328,7 @@ const TDE_HelpText = (function () {
     'test point on the rim, whereas in a sphere, only ~3/4 of the mass is at ' +
     'favorable angles. The disk Roche radius is therefore SMALLER than the ' +
     'textbook 3D value:',
-    '    d_disk = d_3D * (g_sphere / g_disk)^(1/3) ~ 0.76 * d_3D',
+    '    \\[ d_\\mathrm{disk} = d_\\mathrm{3D} \\left( \\frac{g_\\mathrm{sphere}}{g_\\mathrm{disk}} \\right)^{1/3} \\approx 0.76 \\, d_\\mathrm{3D} \\]',
     'for typical h/r_s ~ 0.16. A flat cluster is HARDER to disrupt than its ' +
     '3D-sphere equivalent.',
     '',

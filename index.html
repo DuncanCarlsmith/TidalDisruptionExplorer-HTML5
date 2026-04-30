@@ -4,6 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Tidal Disruption Explorer</title>
+  <!-- MathJax 3 (lazy-loaded for popup math; doesn't block GUI) -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath:  [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+      },
+      svg: { fontCache: 'global' },
+      startup: {
+        // We typeset on-demand from Modal.show — don't auto-typeset the page.
+        typeset: false,
+      },
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+          id="mathjax-script"></script>
   <style>
     /* =========================================================================
        Theme variables
@@ -1047,6 +1063,27 @@
       Modal.overlay.classList.add('visible');
       Modal.overlay.setAttribute('aria-hidden', 'false');
       Modal.isOpen = true;
+      // Typeset math, if MathJax is available. If still loading, wait for it.
+      Modal.typesetMath();
+    };
+
+    // Run MathJax on the modal body, defensively (handles all loading states).
+    Modal.typesetMath = function () {
+      if (typeof window.MathJax === 'undefined') return;
+      const tj = () => {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise([Modal.bodyEl]).catch((err) => {
+            console.warn('MathJax typeset failed:', err && err.message);
+          });
+        }
+      };
+      // If MathJax has already initialized, typeset directly; else wait on its
+      // startup promise.
+      if (window.MathJax.startup && window.MathJax.startup.promise) {
+        window.MathJax.startup.promise.then(tj);
+      } else {
+        tj();
+      }
     };
 
     Modal.hide = function () {
