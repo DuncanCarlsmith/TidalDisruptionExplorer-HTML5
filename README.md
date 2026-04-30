@@ -11,10 +11,16 @@ geometry-corrected 2D-disk Roche radius (orange dotted) are drawn around each
 source, so you can watch the cluster survive a passage between the two and
 disrupt at smaller periapsis.
 
+![Mid-flyby tidal stretching](screenshots/hero.png)
+*Single source, parabolic encounter, periapsis = 35, t = 5. Cluster stretched
+along the line to the source as it passes through the 3D Roche radius.*
+
 ## Live demo
 
-GitHub Pages will be enabled in milestone M8. Until then, you can run the app
-locally:
+**[Open the simulation](https://duncancarlsmith.github.io/TidalDisruptionExplorer-HTML5/)**
+(hosted on GitHub Pages).
+
+To run locally instead:
 
 ```bash
 git clone https://github.com/DuncanCarlsmith/TidalDisruptionExplorer-HTML5.git
@@ -117,33 +123,33 @@ The About modal lists six pedagogical experiments. Highlights:
 | `tests/run_smoke_*.js`     | Test harnesses for milestones M3..M6d (see HARNESSES.md) |
 | `package.json`             | Node deps for harnesses (Playwright)                   |
 | `HARNESSES.md`             | How to install Playwright and run the harnesses        |
+| `screenshots/`             | Documentation screenshots (hero, disruption, L4, About modal) |
 | `LICENSE`                  | MIT license text                                       |
 | `PROGRESS.md`              | Build journal: every milestone, every test count, recovery instructions |
 | `PROGRESS_*_pre_*.md`      | Timestamped pre-edit backups of `PROGRESS.md` (one per milestone) |
 
 ## Build state
 
-This is a multi-milestone port. As of milestone M6d:
+Project complete through M8. All milestones verified:
 
 - M0..M2: Repository, MATLAB reference data, JS physics modules (parity 44/44 PASS)
 - M3..M4: GUI shell, animation loop (smoke 20/20 PASS each)
 - M5a..M5d: All 11 scenarios + theme toggle verified (84/84 PASS)
 - M6a..M6d: Help and About modals with MathJax math (80/80 PASS)
-- M7a (this commit): README expanded
-- M7b: Page polish (favicon, viewport meta) -- pending
-- M7c: Final regression smoke + documentation screenshots -- pending
-- M8: Enable GitHub Pages -- pending
+- M7a: README expanded
+- M7b: Page polish (favicon, viewport meta)
+- M7c: Regression smoke (M5d 16/16 PASS) + documentation screenshots
+- M8: GitHub Pages enabled, site live at the URL above
 
-Total verified: **244 sub-checks PASS, 0 FAIL** across 8 sub-milestones.
+Total verified: **260 sub-checks PASS, 0 FAIL** across all sub-milestones.
 
 See `PROGRESS.md` for the full ledger.
 
 ## Original MATLAB Live Script
 
-The MATLAB original lives in
-`Documents/MATLAB/Roche limit/TidalDisruptionExplorerMATLAB/` on the author's
-machine and is also available on
-[MATLAB File Exchange](https://www.mathworks.com/matlabcentral/fileexchange/?q=carlsmith).
+The MATLAB original is published on MATLAB File Exchange:
+**[Tidal Disruption Explorer (FEX 183760)](https://www.mathworks.com/matlabcentral/fileexchange/183760-tidal-disruption-explorer)**.
+
 The HTML5 port preserves the exact GUI layout, control names, and physics --
 all 11 scenario+IC combinations match MATLAB reference values to ~1e-9 (pure
 functions) and ~1e-6 (100-step trajectories).

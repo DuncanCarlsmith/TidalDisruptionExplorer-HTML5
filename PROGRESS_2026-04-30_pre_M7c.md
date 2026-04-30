@@ -98,7 +98,7 @@ Test hooks namespace: `window.TDE_App` exposes pure modules + state accessors
 - [ ] **M7**: Final polish, README, screenshots, FEX-style description.
   - [x] **M7a**: README rewrite (live-demo instructions, scenarios table, physics summary, experiments, repo layout, build state)
   - [x] **M7b**: Page polish (SVG favicon inline as data URL; about-text URL corrected to actual repo)
-  - [x] **M7c**: Final regression smoke + documentation screenshots (M5d 16/16 PASS via Playwright + Puppeteer Chrome 131; 4 PNGs in `screenshots/`)
+  - [ ] **M7c**: Final regression smoke + documentation screenshots (deferred; needs container Chromium)
 - [x] **M8**: GitHub Pages deploy verified (live at https://duncancarlsmith.github.io/TidalDisruptionExplorer-HTML5/)
 
 ## Current state
@@ -123,36 +123,15 @@ selector usage exactly. All test hooks (`window.TDE_App.state()`,
 cleanly on first try; if they don't, the most likely culprit is a small
 selector or hook-name discrepancy that's quick to fix.
 
-**M7c done (2026-04-30).** Container Chromium came back via Puppeteer's
-bundled Chrome 131 with Playwright as the driver (the standard Playwright
-chromium install was a no-op in this container, so the harnesses were run
-with `executablePath` pointing at `/home/claude/.cache/puppeteer/chrome/linux-131.0.6778.204/chrome-linux64/chrome`).
+M7c (regression smoke + screenshot capture for the README) remains
+deferred until container `bash_tool` is available again. With harnesses
+now committed in the repo, M7c is straightforward: `npm install` then
+`npm run test:all`. Any failures point at concrete issues to fix; any
+screenshots produced (saved as `tests/m*_*.png` per harness) can be
+cherry-picked into the README.
 
-Regression: `tests/run_smoke_m5d.js` ran 16/16 PASS against the current
-`f889f8c` build. No console errors, no page errors, no NaN, theme toggle
-clean, animation advancing as expected. The reconstructed harness from
-the recovery turn is therefore validated end-to-end.
-
-Documentation screenshots: four PNGs captured in container Chromium,
-uploaded via the ngrok command server `/upload` endpoint, and `mv`'d into
-a new `repo/screenshots/` directory:
-
-- `hero.png` (86 KB) -- single + parabolic, periapsis 35, t=5, mid-flyby
-   tidal stretching with bound fraction 53%
-- `disruption.png` (90 KB) -- single + parabolic, periapsis 30, t=14,
-   cluster fully torn into a stream around the source, bound 21%
-- `lagrange_l4.png` (101 KB) -- binary + lagrange L4, t=2, equilateral
-   triangle configuration, bound 100%
-- `about_math.png` (165 KB) -- About modal with MathJax-rendered Roche
-   equations (fluid and rigid forms)
-
-README updated: lead paragraph + hero image, "Live demo" section now
-points at the live GitHub Pages URL, MATLAB File Exchange link points
-at FEX 183760 (https://www.mathworks.com/matlabcentral/fileexchange/183760-tidal-disruption-explorer),
-build state shows all milestones complete with revised total of 260
-sub-checks (244 + 16 from the M5d regression).
-
-Project complete. All milestones M0..M8 verified.
+Next sub-milestone: M7c (when bash_tool returns) or M8 (already done!).
+After M7c, project is fully complete.
 
 ## Recovery instructions for a fresh Claude session
 

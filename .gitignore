@@ -1,0 +1,8 @@
+# README pre-edit backups (git log preserves prior versions)
+README_*_pre_*.md
+
+# macOS metadata
+.DS_Store
+
+# Local working files
+files.zip
